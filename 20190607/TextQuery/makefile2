@@ -1,0 +1,16 @@
+
+CC:= g++
+CXXFLAGS:= -g -Wall
+LIBS:= -llog4cpp -lpthread
+OBJS:= Query.o TextQuery.o get_print.o
+
+all:wordQueryTest.exe andQueryTest.exe and_orQueryTest.exe
+
+wordQueryTest.exe: wordQueryTest.o $(OBJS) 
+	$(CC) -o $@ $^ $(CXXFLAGS)  $(LIBS)
+
+andQueryTest.exe:andQueryTest.o $(OBJS) 
+	$(CC) -o $@ $^ $(CXXFLAGS)  $(LIBS)
+
+and_orQueryTest.exe:and_orQueryTest.o $(OBJS) 
+	$(CC) -o $@ $^ $(CXXFLAGS)  $(LIBS)
