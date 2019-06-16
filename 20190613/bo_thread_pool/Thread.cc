@@ -46,7 +46,7 @@ void * Thread::threadFunc(void * arg)
     Thread * thread_ = (Thread*)arg;
     if(thread_)
     {
-        thread_->run();
+        thread_->cb_();
     }
     return nullptr;
 }

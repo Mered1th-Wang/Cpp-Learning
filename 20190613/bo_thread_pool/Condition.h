@@ -23,7 +23,6 @@ public:
 
     void wait()
     {
-        MutexLock::UnassignGuard ug((mutex_));
         MCHECK(pthread_cond_wait(&pcond_, mutex_.getPthreadMutex()));
     }
 

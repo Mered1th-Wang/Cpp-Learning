@@ -5,9 +5,8 @@
 #include <assert.h>
 #include <boost/noncopyable.hpp>
 
+#include <muduo/base/Types.h>
 #include <muduo/base/CurrentThread.h>
-#include <muduo/base/CurrentThread.cc>
-
 
 #ifdef CHECK_PTHREAD_RETURN_VALUE
 
@@ -32,32 +31,31 @@ extern void __assert_perror_fail (int errnum,
 
 #endif // CHECK_PTHREAD_RETURN_VALUE
 
+using namespace muduo;
+
 namespace wd
 {
 
 class MutexLock : boost::noncopyable
 {
 public:
-    MutexLock():holder_(0)
+    MutexLock()
     {
         MCHECK(pthread_mutex_init(&mutex_, nullptr));
     }
 
     ~MutexLock() 
     {
-        assert(holder_ == 0);
         MCHECK(pthread_mutex_destroy(&mutex_));
     }
 
     void lock()
     {
         MCHECK(pthread_mutex_lock(&mutex_));
-        assignHolder();
     }
 
     void unlock()
     {
-        unassignHolder();
         MCHECK(pthread_mutex_unlock(&mutex_));
     }
 
@@ -66,35 +64,8 @@ public:
 private:
     friend class Condition;
 
-    class UnassignGuard : boost::noncopyable
-    {
-    public:
-        UnassignGuard(MutexLock & owner): owner_(owner)
-        {
-            owner_.unassignHolder();
-        }
-
-        ~UnassignGuard()
-        {
-            owner_.unassignHolder();
-        }
-    private:
-        MutexLock& owner_;
-    };
-
-    void unassignHolder()
-    {
-        holder_ = 0;
-    }
-
-    void assignHolder()
-    {
-        holder_ = muduo::CurrentThread::tid();
-    }
-
 private:
     pthread_mutex_t mutex_;
-    pid_t holder_;
 };
 
 class MutexGuard : boost::noncopyable

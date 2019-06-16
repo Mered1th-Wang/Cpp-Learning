@@ -1,49 +1,76 @@
 #include "ThreadPool.h"
-#include <assert.h>
-#include <stdio.h>
-
-#include <iostream>
 
 using namespace wd;
+using namespace std;
 
-ThreadPool::ThreadPool(const string& nameArg) 
-  : mutex_(),
-    notEmpty_(mutex_),
-    notFull_(mutex_),
-    name_(nameArg),
-    maxQueueSize_(0),
-    running_(false)
+ThreadPool::ThreadPool(size_t threadNum, size_t queSize)
+:   threadNum_(threadNum),
+    queSize_(queSize),
+    taskque_(queSize),
+    isExit_(false)
 {
-
+    threads_.reserve(threadNum_);
 }
 
+void ThreadPool::start()
+{
+    for(size_t idx = 0; idx != threadNum_; ++idx)
+    {
+        unique_ptr<Thread> up(new Thread(
+            bind(&ThreadPool::threadFunc, this)
+        ));
+        threads_.push_back(std::move(up)); //禁止拷贝，用移动语义
+    }
+    for(auto & thread: threads_)
+    {
+        thread->start();
+    }
+}
+
+void ThreadPool::addTask(Task && task)
+{
+    taskque_.push(std::move(task));
+}
+
+void ThreadPool::stop()
+{
+    if(!isExit_)
+    {
+        while(!taskque_.empty())
+        { 
+        //    sleep(1);
+        }
+
+        taskque_.wakeup();
+
+        isExit_ = true;
+
+        for(auto & thread : threads_)
+        {
+           thread->join();
+        }
+    }
+}
+
+Task ThreadPool::getTask()
+{
+    return taskque_.pop();
+}
+
+//WorkerThread要执行的
+void ThreadPool::threadFunc()
+{
+    while(!isExit_)
+    {
+        Task task = getTask();
+        if(task)
+        {
+            task();
+        }
+    }
+}
+    
 ThreadPool::~ThreadPool()
 {
-    if(running_)
-    {
-        stop();
-    }
+    this->stop(); 
 }
-
-void ThreadPool::start(int numThreads)
-{
-    assert(threads_.empty());
-    running_ = true;
-    threads_.reserve(numThreads);
-    for(int i = 0; i < numThreads; ++i)
-    {
-        char id[32];
-        snprintf(id, sizeof(id), "%d", i + 1);
-        threads_.emplace(new Thread(std::bind(&ThreadPool::runInThread, this), name_+id));
-        threads_[i]->start();
-    }
-    if(numThreads == 0 && ThreadInitCallback_)
-    {
-        ThreadInitCallback_();
-    }
-}
-
-
-void start();
-void stop();
-

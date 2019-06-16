@@ -1,57 +1,41 @@
 #pragma once
-#include "Mutex.h"
+
+#include "TaskQueue.h"
 #include "Thread.h"
-#include "Condition.h"
-#include <functional>
 #include <vector>
-#include <deque>
 #include <memory>
+#include <functional>
+#include <iostream>
 
 using namespace std;
 
 namespace wd
 {
 
-class ThreadPool
-{
-public:
-    using Task = std::function<void()>;
+using Task = std::function<void()>;
 
-    ThreadPool(const string& nameArg = string("ThreadPool")); 
-    ~ThreadPool();
-    
-    void setMaxQueueSize(int maxSize) { maxQueueSize_ = maxSize; }
-    void setThreadInitCallback(const Task& cb)
-    {   ThreadInitCallback_ = cb;   }
+class Thread;
+class ThreadPool : boost::noncopyable
+{
+    friend class WorkThread;
+public:
+    explicit ThreadPool(size_t threadNum, size_t queSize);
+    ~ThreadPool(); 
 
     void start();
     void stop();
-
-    const string& name() const
-    {
-        return name_;
-    }
-
-    size_t queSize() const;
-
-    void run(Task f);
+    void addTask(Task && task);
 
 private:
-    bool isFull() const;
-    void runInThread();
-    Task take();
-
+    void threadFunc();
+    Task getTask();
 
 private:
-    MutexLock mutex_;
-    Condition notEmpty_;
-    Condition notFull_;
-    string name_;
-    Task ThreadInitCallback_;
-    vector<unique_ptr<Thread>> threads_;
-    deque<Task> queue_;
-    size_t maxQueueSize_;
-    bool running_;
+    size_t threadNum_;
+    size_t queSize_;
+    std::vector<std::unique_ptr<Thread>> threads_;
+    TaskQueue taskque_;
+    bool isExit_;
 };
 
-}
+} // namespace wd

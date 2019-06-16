@@ -3,9 +3,9 @@
 #include <pthread.h>
 #include <boost/noncopyable.hpp>
 #include <iostream>
+#include <functional>
 
-using std::cout;
-using std::endl;
+using namespace std;
 
 namespace wd
 {
@@ -14,24 +14,26 @@ namespace wd
 class Thread : boost::noncopyable
 {
 public:
-    Thread() 
+    using ThreadCallback = std::function<void()>;
+
+    Thread(ThreadCallback && cb) 
     :pthid_(0)
     ,isRunning_(false)
+    ,cb_(cb)
     {}   //std::cout << "pthid_ = " << pthid_ << std::endl;  }
 
-    virtual ~Thread(); 
+    ~Thread(); 
 
     void start();
     void join();
 
-
 private:
-    virtual void run() = 0;
     static void * threadFunc(void *);
 
 private:
     pthread_t pthid_;
     bool isRunning_;
+    ThreadCallback cb_;
 };
 
 } // namespace wd
