@@ -1,5 +1,5 @@
 ip 192.168.3.160
 port 5000
-dir /home/wj/C++/project/bin
+dir /home/wj/C++/project/yuliao/
 dict /home/wj/C++/project/data/dict.dat
 index /home/wj/C++/project/data/index.dat

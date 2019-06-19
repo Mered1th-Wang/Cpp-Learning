@@ -1,6 +1,6 @@
-#include "Configuration.h"
-#include "DictProducer.h"
-#include "IndexProduver.h"
+#include "../include/Configuration.h"
+#include "../include/DictProducer.h"
+#include "../include/IndexProduver.h"
 
 using namespace wd;
 
@@ -15,7 +15,7 @@ int main()
 
     dirProducer.build_dict();
     dirProducer.store_dict();
-    //dirProducer.show_dict();
+    dirProducer.show_dict();
     
     IndexProducer indexProducer(confMap["dict"], confMap["index"]);
     indexProducer.read_dict();

@@ -1,4 +1,4 @@
-#include "IndexProduver.h"
+#include "../include/IndexProduver.h"
 
 using namespace wd;
 
@@ -24,7 +24,6 @@ void IndexProducer::build_index()
 {
     for(char ch = 'a'; ch <= 'z'; ++ch)
     {
-        cout << ch << endl;
         for(size_t idx = 0; idx != vecDic_.size(); ++idx)
         {
             if(vecDic_[idx].first.find(ch) != string::npos)

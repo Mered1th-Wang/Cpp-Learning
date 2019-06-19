@@ -1,17 +1,17 @@
-#include "DictProducer.h"
+#include "../include/DictProducer.h"
 
 using namespace wd;
 
-void changeTolittle(string & word)
-{
-    for(size_t idx = 0; idx != word.size(); ++idx)
-    {
-        if(!islower(word[idx]))
-        {
-            word[idx] = tolower(word[idx]);
-        }
-    }
-}
+//void changeTolittle(string & word)
+//{
+//    for(size_t idx = 0; idx != word.size(); ++idx)
+//    {
+//        if(!islower(word[idx]))
+//        {
+//            word[idx] = tolower(word[idx]);
+//        }
+//    }
+//}
 
 
 DictProducer::DictProducer(const string& dir, const string& filepath)
@@ -19,6 +19,8 @@ DictProducer::DictProducer(const string& dir, const string& filepath)
      filepath_(filepath),
      dict_()
 {
+    //cout << "dir = " << dir << endl;
+    //cout << "filepath = " << filepath << endl;
     DIR * d = opendir(dir.c_str());
     if(d == nullptr)
     {
@@ -37,7 +39,8 @@ void DictProducer::build_dict()
 {
     for(size_t idx = 0; idx != files_.size(); ++idx)
     {
-        string filepath = string("../bin/") + files_[idx];
+        string filepath = string("../yuliao/") + files_[idx];
+        cout << filepath << endl;
         ifstream ifs(filepath);
         string word;
         while(ifs >> word)
