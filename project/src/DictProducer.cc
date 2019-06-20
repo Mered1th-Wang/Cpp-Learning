@@ -2,16 +2,16 @@
 
 using namespace wd;
 
-//void changeTolittle(string & word)
-//{
-//    for(size_t idx = 0; idx != word.size(); ++idx)
-//    {
-//        if(!islower(word[idx]))
-//        {
-//            word[idx] = tolower(word[idx]);
-//        }
-//    }
-//}
+void changeTolittle(string & word)
+{
+    for(size_t idx = 0; idx != word.size(); ++idx)
+    {
+        if(!islower(word[idx]))
+        {
+            word[idx] = tolower(word[idx]);
+        }
+    }
+}
 
 
 DictProducer::DictProducer(const string& dir, const string& filepath)
@@ -51,6 +51,7 @@ void DictProducer::build_dict()
             {
                 word.erase(word.end() - 1);
             }
+            changeTolittle(word);
             dict_[word]++;
         }
     }
