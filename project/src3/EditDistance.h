@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -12,14 +13,14 @@ class EditDistance
 {
 public:
     EditDistance(const string& a, const string& b)
-        : a_(a), b_(b)
+        : word1(a), word2(b)
     {}
 
     int work();
 
 private:
-    string a_;
-    string b_;
+    string word1;
+    string word2;
     int dp[1010][1010];
 };
 

@@ -8,7 +8,6 @@
 #include <set>
 #include <memory>
 
-const int INF = 1000000000;
 
 using namespace std;
 
@@ -29,7 +28,7 @@ public:
     {
         if(lhs.iDist_ != rhs.iDist_) return lhs.iDist_ > rhs.iDist_;
         else if(lhs.iFreq_ != rhs.iFreq_) return lhs.iFreq_ < rhs.iFreq_;
-        else return lhs.word_ < rhs.word_;
+        else return lhs.word_ > rhs.word_;
     }
 };
 
@@ -37,8 +36,10 @@ class MyTask
 {
 public:
     MyTask(MyDict & dic, const string& queryWord, const TcpConnectionPtr & conn)
-        : dic_(dic), queryWord_(queryWord), conn_(conn) 
-    {}
+        : dic_(dic), conn_(conn) 
+    {
+        queryWord_ = queryWord.substr(0,queryWord.size()-1);
+    }
     
     void execute();                     //执行查询
     void queryIndexTable();             //查询索引
