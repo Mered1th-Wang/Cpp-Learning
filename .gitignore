@@ -31,5 +31,6 @@
 *.out
 *.app
 
+/2019*
 /Documents
 /project
