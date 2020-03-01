@@ -37,7 +37,7 @@ void onClose(const wd::TcpConnectionPtr & conn)
 
 int main(void)
 {
-	wd::Acceptor acceptor(5000, "192.168.3.160");
+	wd::Acceptor acceptor(8888, "192.168.1.107");
 	acceptor.init();
 
     wd::EventLoop loop(acceptor);
