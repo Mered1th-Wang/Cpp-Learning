@@ -7,6 +7,27 @@
 
 using namespace std;
 
+namespace wd
+{
+
+class Task
+{
+public:
+    Task(const string & msg,
+         wd::TcpConnectionPtr & conn)
+    : _msg(msg)
+    , _conn(conn)
+    {}
+
+    void process()
+    {
+        string response = _msg;
+        _conn->sendInLoop(response);
+    }
+
+}
+
+
 void onConnection(const wd::TcpConnectionPtr & conn)
 {
     cout << conn->toString() << " has connected!" << endl;
@@ -15,12 +36,14 @@ void onConnection(const wd::TcpConnectionPtr & conn)
 
 void onMessage(const wd::TcpConnectionPtr & conn)
 {
+    cout << "onMessage...." << endl;
     string msg = conn->receive();
     cout << ">> receive msg from client: " << msg << endl;
     
     //业务逻辑交给线程池处理
-    
-    conn->send(msg);
+    Task task(msg, conn);
+    Threadpool * pthreadpool;
+    pthreadpool->addTask(std::bind(&Task::process, task));
 }
 
 void onClose(const wd::TcpConnectionPtr & conn)
@@ -40,4 +63,4 @@ int main(void)
 
     return 0;
 }
-
+}
