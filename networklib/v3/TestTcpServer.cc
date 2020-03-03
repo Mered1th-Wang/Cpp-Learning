@@ -1,4 +1,7 @@
 #include "TcpServer.h"
+#include "Acceptor.h"
+#include "TcpConnection.h"
+#include "EventLoop.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -7,9 +10,9 @@
 
 using namespace std;
 
-namespace wd
-{
+using namespace wd;
 
+#if 0
 class Task
 {
 public:
@@ -22,11 +25,15 @@ public:
     void process()
     {
         string response = _msg;
-        _conn->sendInLoop(response);
+        _conn->send(response);
+        //_conn->sendInLoop(response);
     }
+private:
+    string _msg;
+    wd::TcpConnectionPtr _conn;
+};
 
-}
-
+#endif
 
 void onConnection(const wd::TcpConnectionPtr & conn)
 {
@@ -39,11 +46,11 @@ void onMessage(const wd::TcpConnectionPtr & conn)
     cout << "onMessage...." << endl;
     string msg = conn->receive();
     cout << ">> receive msg from client: " << msg << endl;
-    
+    conn->send(msg);
     //业务逻辑交给线程池处理
-    Task task(msg, conn);
-    Threadpool * pthreadpool;
-    pthreadpool->addTask(std::bind(&Task::process, task));
+    //Task task(msg, conn);
+    //Threadpool * pthreadpool;
+    //pthreadpool->addTask(std::bind(&Task::process, task));
 }
 
 void onClose(const wd::TcpConnectionPtr & conn)
@@ -51,7 +58,7 @@ void onClose(const wd::TcpConnectionPtr & conn)
     cout << ">> " << conn->toString() << " has closed!" << endl;
 }
 
-int main(void)
+int main()
 {
     wd::TcpServer server("192.168.1.107", 8888);
 
@@ -63,4 +70,4 @@ int main(void)
 
     return 0;
 }
-}
+

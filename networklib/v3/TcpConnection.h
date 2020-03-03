@@ -8,6 +8,7 @@
 #include <string>
 #include <functional>
 
+using std::function;
 
 namespace wd
 {
